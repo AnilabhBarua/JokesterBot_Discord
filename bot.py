@@ -1,32 +1,43 @@
 import discord
-from discord import app_commands
-from discord.ext import commands
+import google.generativeai as genai
 import os
+from discord.ext import commands
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load API keys from .env file
 load_dotenv()
-TOKEN = os.getenv("DISCORD_BOT_TOKEN")
+DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-# Setting up the bot with required intents
+# Configure Google Gemini
+genai.configure(api_key=GEMINI_API_KEY)
+
+# Discord bot setup
 intents = discord.Intents.default()
-intents.message_content = True  # Needed for message-based commands
-
+intents.message_content = True  # Required for receiving messages
 bot = commands.Bot(command_prefix="!", intents=intents)
 
+# Get AI response
+def get_gemini_response(user_input):
+    model = genai.GenerativeModel("gemini-pro")
+    response = model.generate_content(user_input)
+    return response.text if response.text else "I couldn't generate a response."
+
+# Bot event
 @bot.event
 async def on_ready():
-    print(f'✅ Logged in as {bot.user}')
-    try:
-        await bot.tree.sync()  # Syncing slash commands
-        print('✅ Slash commands synced!')
-    except Exception as e:
-        print(f'❌ Error syncing commands: {e}')
+    print(f"✅ Logged in as {bot.user}")
 
-# Basic slash command
-@bot.tree.command(name="hello", description="Say hello to the bot!")
-async def hello(interaction: discord.Interaction):
-    await interaction.response.send_message("Hello! 👋")
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
 
+    if message.content.startswith("!chat"):
+        user_message = message.content[len("!chat "):]
+        await message.channel.send("💬 Thinking...")
+        response = get_gemini_response(user_message)
+        await message.channel.send(response)
 
-bot.run(TOKEN)
+# Run the bot
+bot.run(DISCORD_BOT_TOKEN)

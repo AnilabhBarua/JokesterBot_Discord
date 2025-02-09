@@ -1,58 +1,63 @@
-Here's a simple **README.md** for your JokesterBot Discord project:  
 
----
+# 🎭 JokesterBot - AI-Powered Discord Bot  
 
-# 🎭 JokesterBot - A Fun Discord Bot  
-
-JokesterBot is a simple yet fun Discord bot built using Python and `discord.py`. It provides interactive commands and can be easily extended with new features.  
+JokesterBot is an interactive Discord bot powered by **Google Gemini AI**, built using `discord.py`. It can generate responses to user messages using AI and is easily customizable with more commands.  
 
 ## 🚀 Features  
-✅ Slash command `/hello` – The bot responds with a friendly "Hello! 👋"  
-✅ Customizable with more commands and interactions  
-✅ Uses **environment variables** to store sensitive data securely  
+✅ Uses **Google Gemini AI** for natural language responses  
+✅ Slash command `!chat <message>` – The bot responds with AI-generated text  
+✅ Secure API key storage with environment variables  
 ✅ Built with `discord.ext.commands` for better command handling  
 
 ## 🛠️ Setup and Usage  
 
-1. **Clone the repository**  
-   ```bash
-   git clone https://github.com/AnilabhBarua/JokesterBot_Discord.git
-   cd JokesterBot_Discord
-   ```
-
-2. **Create a virtual environment (optional but recommended)**  
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-3. **Install dependencies**  
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Create a `.env` file** and add your Discord bot token:  
-   ```
-   DISCORD_TOKEN=your_bot_token_here
-   ```
-
-5. **Run the bot**  
-   ```bash
-   python bot.py
-   ```
-
-## 🤖 Adding More Features  
-Want to add more commands? Just modify `bot.py` and add more slash commands like this:  
-
-```python
-@bot.tree.command(name="joke", description="Get a random joke!")
-async def joke(interaction: discord.Interaction):
-    await interaction.response.send_message("Why did the chicken cross the road? To get to the other side! 🐔")
+### 1️⃣ Clone the repository  
+```bash
+git clone https://github.com/AnilabhBarua/JokesterBot_Discord.git
+cd JokesterBot_Discord
 ```
 
-## 📌 Contributing  
+### 2️⃣ Create a virtual environment (optional but recommended)  
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+### 3️⃣ Install dependencies  
+```bash
+pip install -r requirements.txt
+```
+
+### 4️⃣ Create a `.env` file** and add your Discord bot token & Gemini API key:  
+```
+DISCORD_BOT_TOKEN=your_discord_bot_token
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+### 5️⃣ Run the bot  
+```bash
+python bot.py
+```
+
+## 🔥 Bot Commands  
+
+| Command         | Description                         |
+|----------------|-------------------------------------|
+| `!chat <msg>`  | Chat with the AI-powered bot       |
+
+## 🤖 Adding More Features  
+Want to add more commands? Just modify `bot.py` and add commands like this:  
+
+```python
+@bot.command()
+async def joke(ctx):
+    await ctx.send("Why did the chicken cross the road? To get to the other side! 🐔")
+```
+
+## 📌 Notes  
+- Make sure **Message Content Intent** is enabled in Discord Developer Portal.  
+- Ensure your `.env` file is correctly set up.  
+
+## 🤝 Contributing  
 Feel free to fork the repo, add your own features, and make a pull request!  
 
----
-
-Let me know if you want to add anything! 🚀
