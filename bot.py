@@ -1,7 +1,7 @@
 import discord
 import groq
 import os
-import asyncio # Still needed for the 0.5s delay
+import asyncio
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -18,7 +18,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# This function to get the response from Groq remains the same
+# ------------------ Groq API call ------------------
 async def get_groq_response(user_input):
     try:
         response = await client.chat.completions.create(
@@ -34,11 +34,32 @@ async def get_groq_response(user_input):
         print(f"An error occurred with Groq API: {e}")
         return "Sorry, I couldn't get a response. There might be an issue with the API."
 
-# Bot event
+# ------------------ Events ------------------
 @bot.event
 async def on_ready():
+    try:
+        # Sync slash commands
+        await bot.tree.sync()
+        print("✅ Slash commands synced.")
+    except Exception as e:
+        print(f"Slash sync failed: {e}")
     print(f"✅ Logged in as {bot.user}")
 
+# ------------------ Slash Command ------------------
+@bot.tree.command(name="chat", description="Chat with the AI assistant")
+async def slash_chat(interaction: discord.Interaction, message: str):
+    await interaction.response.defer()  # show "thinking..." indicator
+
+    full_response = await get_groq_response(message)
+
+    # Send API response
+    await interaction.followup.send(full_response)
+
+    # Wait 6 seconds, then send your hardcoded line
+    await asyncio.sleep(6)
+    await interaction.followup.send("aur yaad rakhna Error69 dalla tha,, dalla hei, aur dalla hi rhega!")
+
+# ------------------ Legacy !chat command (optional) ------------------
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
@@ -50,20 +71,12 @@ async def on_message(message):
             await message.channel.send("Please provide a message after `!chat`.")
             return
 
-        # --- MODIFIED LOGIC STARTS HERE ---
-        
-        # 1. Show a "typing..." status while waiting for the API
         async with message.channel.typing():
-            # Get the full response from the API
             full_response = await get_groq_response(user_message)
-            # Send the entire response in one message
             await message.channel.send(full_response)
-        
-        # 2. Wait for exactly 0.5 seconds
+
         await asyncio.sleep(6)
-        
-        # 3. Send your hardcoded sentence
         await message.channel.send("aur yaad rakhna Error69 dalla tha,, dalla hei, aur dalla hi rhega!")
 
-# Run the bot
+# ------------------ Run bot ------------------
 bot.run(DISCORD_BOT_TOKEN)
